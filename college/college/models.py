@@ -54,11 +54,36 @@ class Auditorium(models.Model):
         return self.address
 
 
+class Course(models.Model):
+    class Meta:
+        verbose_name = "Курс"
+        verbose_name_plural = "Курсы"
+
+    title = models.CharField(
+        max_length=64,
+        verbose_name="Название курса",
+    )
+    students = models.ManyToManyField(
+        "users.Student",
+        related_name="courses",
+    )
+
+    def __str__(self):
+        return self.title
+
+
 class TimeTable(models.Model):
     class Meta:
         verbose_name = "Расписание занятий"
         verbose_name_plural = "Расписания занятий"
 
+    course = models.ForeignKey(
+        "Course",
+        on_delete=models.PROTECT,
+        related_name="timetables",
+        null=True,
+        verbose_name="Курс",
+    )
     lesson = models.ForeignKey(
         "Lesson",
         on_delete=models.PROTECT,
@@ -84,8 +109,11 @@ class TimeTable(models.Model):
         verbose_name="Продолжительность (мин.)",
     )
 
+    def time(self) -> str:
+        return self.start_at.strftime('%H:%M')
+
     def __str__(self):
-        return f"{self.date.isoformat()} {self.start_at.strftime('%H:%M')}"
+        return f"{self.date.isoformat()} {self.time()}: {self.lesson}"
 
 
 class Grade(models.Model):
@@ -100,10 +128,11 @@ class Grade(models.Model):
         null=True,
         verbose_name="Студент",
     )
-    lesson = models.ForeignKey(
-        "Lesson",
+    timetable = models.ForeignKey(
+        "TimeTable",
         on_delete=models.SET_NULL,
         related_name="grades",
+        blank=True,
         null=True,
         verbose_name="Занятие",
     )
@@ -112,4 +141,4 @@ class Grade(models.Model):
     )
 
     def __str__(self):
-        return f"{self.student} | {self.lesson} | {self.value}"
+        return f"{self.student} | {self.timetable} | {self.value}"

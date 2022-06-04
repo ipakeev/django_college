@@ -4,6 +4,7 @@ from college.models import (
     Chair,
     Lesson,
     Auditorium,
+    Course,
     TimeTable,
     Grade,
 )
@@ -21,6 +22,11 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Auditorium)
 class AuditoriumAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
     pass
 
 

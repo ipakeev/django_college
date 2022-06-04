@@ -2,7 +2,14 @@ from datetime import datetime, timedelta, timezone
 
 from django.core.management import BaseCommand
 
-from college.models import Chair, Lesson, Auditorium, TimeTable, Grade
+from college.models import (
+    Chair,
+    Lesson,
+    Auditorium,
+    Course,
+    TimeTable,
+    Grade,
+)
 from users.models import Teacher, Student
 
 
@@ -49,6 +56,11 @@ class Command(BaseCommand):
             patronymic="Сидорович",
         )
 
+        course = Course.objects.create(
+            title="Подготовительный",
+        )
+        course.students.add(petrov, ivanov, sidorov)
+
         chair = Chair.objects.create(
             title="Математика и физика"
         )
@@ -66,10 +78,11 @@ class Command(BaseCommand):
         )
 
         dt = datetime(2021, 9, 1, 8, 0, tzinfo=timezone.utc)
-        TimeTable.objects.bulk_create([
+        timetable1, timetable2 = TimeTable.objects.bulk_create([
             TimeTable(
                 date=dt.date(),
                 start_at=dt.time(),
+                course=course,
                 lesson=lesson1,
                 auditorium=auditorium,
                 teacher=malyshkin,
@@ -77,6 +90,7 @@ class Command(BaseCommand):
             TimeTable(
                 date=dt.date() + timedelta(days=1),
                 start_at=dt.time(),
+                course=course,
                 lesson=lesson2,
                 auditorium=auditorium,
                 teacher=salmin,
@@ -86,27 +100,27 @@ class Command(BaseCommand):
         Grade.objects.bulk_create([
             Grade(
                 student=petrov,
-                lesson=lesson1,
+                timetable=timetable1,
                 value=4,
             ),
             Grade(
                 student=petrov,
-                lesson=lesson2,
+                timetable=timetable2,
                 value=5,
             ),
             Grade(
                 student=ivanov,
-                lesson=lesson1,
+                timetable=timetable1,
                 value=5,
             ),
             Grade(
                 student=sidorov,
-                lesson=lesson1,
+                timetable=timetable1,
                 value=3,
             ),
             Grade(
                 student=sidorov,
-                lesson=lesson2,
+                timetable=timetable2,
                 value=2,
             ),
         ])
