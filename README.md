@@ -1,0 +1,17 @@
+# Обучающий проект на Django
+
+### **Общие сведения:**
+- Python 3.10
+- Django 4.0
+- SQLite3
+
+### **Цель:** 
+Описать учебный процесс в неком вузе.
+
+### **Запуск проекта:**
+- `pip install -r requirements.txt`
+- `cd college`
+- `python manage.py migrate`
+- `python manage.py createsuperuser`
+- `python manage.py fill_db` - заполнить БД фейковыми данными
+- `python manage.py runserver`
