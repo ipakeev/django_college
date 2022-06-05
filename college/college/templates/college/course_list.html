@@ -1,0 +1,16 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container">
+    <h4>Курсы:</h4>
+    <ul>
+      {% for course in course_list %}
+        <li>
+          <a href="{% url 'college:course_detail' pk=course.pk %}">
+            {{ course.title }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

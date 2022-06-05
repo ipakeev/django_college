@@ -1,0 +1,16 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container">
+    <h4>Студенты:</h4>
+    <ul>
+      {% for student in student_list %}
+        <li>
+          <a href="{% url 'users:student_detail' pk=student.pk %}">
+            {{ student }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container" style="font-size: large">
+    <div>
+      Кафедра:
+      <a href="{% url 'college:chair_detail' pk=lesson.chair_id %}">
+        {{ lesson.chair.title }}
+      </a>
+    </div>
+
+    <div>
+      Тема: {{ lesson.theme }}
+    </div>
+
+    <div>
+      Домашнее задание:
+      {% if lesson.homework %}
+        {{ lesson.homework }}
+      {% else %}
+        Нет
+      {% endif %}
+    </div>
+
+  </div>
+{% endblock %}

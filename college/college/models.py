@@ -74,32 +74,33 @@ class Course(models.Model):
 
 class TimeTable(models.Model):
     class Meta:
-        verbose_name = "Расписание занятий"
-        verbose_name_plural = "Расписания занятий"
+        verbose_name = "Расписание"
+        verbose_name_plural = "Расписание"
+        ordering = ("date", "start_at")
 
     course = models.ForeignKey(
         "Course",
         on_delete=models.PROTECT,
-        related_name="timetables",
+        related_name="timetable",
         null=True,
         verbose_name="Курс",
     )
     lesson = models.ForeignKey(
         "Lesson",
         on_delete=models.PROTECT,
-        related_name="timetables",
+        related_name="timetable",
         verbose_name="Занятие",
     )
     auditorium = models.ForeignKey(
         "Auditorium",
         on_delete=models.PROTECT,
-        related_name="timetables",
+        related_name="timetable",
         verbose_name="Аудитория",
     )
     teacher = models.ForeignKey(
         "users.Teacher",
         on_delete=models.PROTECT,
-        related_name="timetables",
+        related_name="timetable",
         verbose_name="Преподаватель",
     )
     date = models.DateField(verbose_name="Дата расписания")

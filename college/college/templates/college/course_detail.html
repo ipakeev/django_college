@@ -1,0 +1,25 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container">
+    <h4>{{ course.title }} курс</h4>
+    <h5>
+      <a href="{% url 'college:timetable' pk=course.pk %}">
+        Расписание занятий
+      </a>
+    </h5>
+
+    <br>
+    <h5>Список студентов:</h5>
+    <ul>
+      {% for student in course.students.all %}
+        <li>
+          <a href="{% url 'users:student_detail' pk=student.pk %}">
+            {{ student }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="{% url 'college:courses' %}">Назад</a>
+  </div>
+{% endblock %}

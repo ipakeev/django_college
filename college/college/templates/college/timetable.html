@@ -1,0 +1,30 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container">
+    <h4>Расписание занятий: {{ course.title }} курс</h4>
+    <table class="table">
+      <tr>
+        <th>Дата</th>
+        <th>Время</th>
+        <th>Занятие</th>
+        <th>Преподаватель</th>
+        <th>Зал</th>
+      </tr>
+      {% for elem in timetable %}
+        <tr>
+          <td>{{ elem.date.isoformat }}</td>
+          <td>{{ elem.time }}</td>
+          <td>
+            <a href="{% url 'college:lesson_detail' pk=elem.lesson_id %}">
+              {{ elem.lesson }}
+            </a>
+          </td>
+          <td>{{ elem.teacher }}</td>
+          <td>{{ elem.auditorium }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    <a href="{% url 'college:course_detail' pk=course.pk %}">Назад</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container">
+    <h4>{{ student }}</h4>
+    <br>
+
+    <h5>Курсы:</h5>
+    <ul>
+      {% for course in student.courses.all %}
+        <li>{{ course }}</li>
+      {% endfor %}
+    </ul>
+
+    <table class="table">
+      <tr>
+        <th>Курс</th>
+        <th>Занятие</th>
+        <th>Оценка</th>
+      </tr>
+      {% for grade in student.grades.all %}
+        <tr>
+          <td>{{ grade.timetable.course }}</td>
+          <td>{{ grade.timetable }}</td>
+          <td>{{ grade.value }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+  </div>
+{% endblock %}
