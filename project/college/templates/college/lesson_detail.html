@@ -22,5 +22,11 @@
       {% endif %}
     </div>
 
+  <div>
+    <a href="{% url 'college:chair_detail' pk=lesson.chair_id %}">Назад</a>
+    <a href="{% url 'college:lesson_update' chair_pk=lesson.chair_id lesson_pk=lesson.pk %}">Изменить</a>
+    <a href="{% url 'college:lesson_delete' chair_pk=lesson.chair_id lesson_pk=lesson.pk %}">Удалить</a>
+  </div>
+
   </div>
 {% endblock %}

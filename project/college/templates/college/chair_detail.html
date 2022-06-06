@@ -3,12 +3,17 @@
 {% block body %}
   <div class="container">
     <h4>Кафедра: {{ chair.title }}</h4>
+
+    <div>
+      <a href="{% url 'college:lesson_create' chair_pk=chair.pk %}">Добавить занятие</a>
+    </div>
+
     <br>
     <h5>Список занятий:</h5>
 
     {% for lesson in chair.lessons.all %}
       <li>
-        <a href="{% url 'college:lesson_detail' pk=lesson.pk %}">
+        <a href="{% url 'college:lesson_detail' chair_pk=chair.pk lesson_pk=lesson.pk %}">
           {{ lesson.theme }}
         </a>
       </li>

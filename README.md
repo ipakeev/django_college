@@ -1,4 +1,4 @@
-# Обучающий проект на Django
+# Учебный проект на Django
 
 ### **Общие сведения:**
 - Python 3.10
@@ -10,7 +10,7 @@
 
 ### **Запуск проекта:**
 - `pip install -r requirements.txt`
-- `cd college`
+- `cd project`
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
 - `python manage.py fill_db` - заполнить БД фейковыми данными

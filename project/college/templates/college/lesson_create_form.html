@@ -1,0 +1,12 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container">
+    <h4>Добавить новое занятие:</h4>
+    <form method="post">
+      {% csrf_token %}
+      <table>{{ form.as_table }}</table>
+      <button type="submit">Добавить</button>
+    </form>
+  </div>
+{% endblock %}

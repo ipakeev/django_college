@@ -8,6 +8,7 @@
         <th>Дата</th>
         <th>Время</th>
         <th>Занятие</th>
+        <th>Длительность</th>
         <th>Преподаватель</th>
         <th>Зал</th>
       </tr>
@@ -15,16 +16,12 @@
         <tr>
           <td>{{ elem.date.isoformat }}</td>
           <td>{{ elem.time }}</td>
-          <td>
-            <a href="{% url 'college:lesson_detail' pk=elem.lesson_id %}">
-              {{ elem.lesson }}
-            </a>
-          </td>
+          <td>{{ elem.lesson }}</td>
+          <td>{{ elem.duration }}</td>
           <td>{{ elem.teacher }}</td>
           <td>{{ elem.auditorium }}</td>
         </tr>
       {% endfor %}
     </table>
-    <a href="{% url 'college:course_detail' pk=course.pk %}">Назад</a>
   </div>
 {% endblock %}

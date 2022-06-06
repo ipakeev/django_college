@@ -1,0 +1,14 @@
+{% extends "root.html" %}
+
+{% block body %}
+  <div class="container">
+    <h4>Изменить занятие: {{ lesson.theme }}.</h4>
+    <form method="post">
+      {% csrf_token %}
+      <table>{{ form.as_table }}</table>
+      <button type="submit">Изменить</button>
+    </form>
+    <br>
+    <a href="{% url 'college:lesson_detail' chair_pk=lesson.chair_id lesson_pk=lesson.id %}">Назад</a>
+  </div>
+{% endblock %}
