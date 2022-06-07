@@ -17,9 +17,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+from application.settings import DEBUG
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="root.html")),
     path("college/", include("college.urls", namespace="college")),
     path("users/", include("users.urls", namespace="users")),
 ]
+
+if DEBUG:
+    urlpatterns += [
+        path('silk/', include("silk.urls", namespace="silk")),
+        path('__debug__/', include("debug_toolbar.urls")),
+    ]
