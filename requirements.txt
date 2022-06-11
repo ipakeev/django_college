@@ -4,3 +4,4 @@ sqlparse==0.4.2
 tzdata==2022.1
 django-silk==4.3.0
 django-debug-toolbar==3.4.0
+PyYAML==6.0

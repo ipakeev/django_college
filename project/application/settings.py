@@ -13,13 +13,17 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from utils.config import get_config
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+config = get_config(BASE_DIR / "etc/config/config.yml")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "ANY_RANDOM_GENERATED_SECRET_KEY")
+SECRET_KEY = config.secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,15 +53,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if DEBUG:
-    INSTALLED_APPS += [
-        "silk",
-        "debug_toolbar",
-    ]
-    MIDDLEWARE += [
-        "silk.middleware.SilkyMiddleware",
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
+if config.silk:
+    INSTALLED_APPS += ["silk"]
+    MIDDLEWARE += ["silk.middleware.SilkyMiddleware"]
+
+if config.debug_toolbar:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
     INTERNAL_IPS = ["127.0.0.1"]
 
 ROOT_URLCONF = 'application.urls'

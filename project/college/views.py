@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (
     View,
@@ -32,8 +32,10 @@ class TimeTableView(View):
 
     def get(self, request, pk: int, *args, **kwargs):
         context = {
-            "course": get_object_or_404(Course, pk=pk),
-            "timetable": TimeTable.objects.filter(course_id=pk).all(),
+            "course": Course.objects.filter(pk=pk),
+            "timetable": TimeTable.objects.filter(course_id=pk).select_related(
+                "course", "lesson", "lesson__chair", "teacher", "auditorium"
+            )
         }
         return render(request, "college/timetable.html", context=context)
 
@@ -42,12 +44,11 @@ class LessonCRUDMixin:
     kwargs: dict
     object: Lesson
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            Lesson,
-            chair_id=self.kwargs["chair_pk"],
+    def get_object(self, queryset=None) -> Lesson:
+        return Lesson.objects.filter(
             id=self.kwargs["lesson_pk"],
-        )
+            chair_id=self.kwargs["chair_pk"],
+        ).select_related("chair").first()
 
     def get_success_url(self):
         return reverse_lazy(

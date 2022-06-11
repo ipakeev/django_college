@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
-from application.settings import DEBUG
+from application.settings import config
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,8 +26,8 @@ urlpatterns = [
     path("users/", include("users.urls", namespace="users")),
 ]
 
-if DEBUG:
-    urlpatterns += [
-        path('silk/', include("silk.urls", namespace="silk")),
-        path('__debug__/', include("debug_toolbar.urls")),
-    ]
+if config.silk:
+    urlpatterns += [path('silk/', include("silk.urls", namespace="silk"))]
+
+if config.debug_toolbar:
+    urlpatterns += [path('__debug__/', include("debug_toolbar.urls"))]
