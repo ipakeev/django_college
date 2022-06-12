@@ -8,8 +8,8 @@ def send_email(
         message: str,
         from_email: str,
         recipients: list[str],
-        auth_user: str,
-        auth_password: str,
+        auth_user: str | None = None,
+        auth_password: str | None = None,
 ) -> None:
     mail.send_mail(subject, message, from_email, recipients,
                    auth_user=auth_user, auth_password=auth_password)

@@ -15,3 +15,6 @@
 - `python manage.py createsuperuser`
 - `python manage.py fill_db` - заполнить БД фейковыми данными
 - `python manage.py runserver`
+- Celery:
+  - Unix: `celery -A project worker -c 1 -l INFO`
+  - Windows: `celery -A project worker -c 1 -l INFO -P gevent`

@@ -1,6 +1,12 @@
 secret_key: ANY_RANDOM_GENERATED_SECRET_KEY
 silk: false
 debug_toolbar: false
+college:
+  phone: +7 (937) 123-45-45
+  email: college@mail.ru
+admin:
+  name: Admin
+  email: admin@mail.ru
 celery:
   broker: redis://127.0.0.1:6379/0
   backend: redis://127.0.0.1:6379/0
