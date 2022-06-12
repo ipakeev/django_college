@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from django.core.management import BaseCommand
 from django.db import transaction
 
-from college.models import (
+from project.college.models import (
     Chair,
     Lesson,
     Auditorium,
@@ -11,7 +11,7 @@ from college.models import (
     TimeTable,
     Grade,
 )
-from users.models import Teacher, Student
+from project.users.models import Teacher, Student
 
 
 class Command(BaseCommand):

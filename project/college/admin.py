@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from college.models import (
+from .models import (
     Chair,
     Lesson,
     Auditorium,

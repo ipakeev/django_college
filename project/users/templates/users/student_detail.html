@@ -18,7 +18,7 @@
         <th>Занятие</th>
         <th>Оценка</th>
       </tr>
-      {% for grade in student.grades.all %}
+      {% for grade in grades %}
         <tr>
           <td>{{ grade.timetable.course }}</td>
           <td>{{ grade.timetable }}</td>

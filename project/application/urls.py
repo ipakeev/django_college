@@ -17,13 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
-from application.settings import config
+from project.application.settings import config
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="root.html")),
-    path("college/", include("college.urls", namespace="college")),
-    path("users/", include("users.urls", namespace="users")),
+    path("college/", include("project.college.urls", namespace="college")),
+    path("users/", include("project.users.urls", namespace="users")),
 ]
 
 if config.silk:

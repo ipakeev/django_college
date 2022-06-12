@@ -1,8 +1,9 @@
-from django.db.models import Prefetch
+from django.shortcuts import render
+from django.views import View
 from django.views.generic import ListView, DetailView
 
-from college.models import Course, Grade, TimeTable
-from users.models import Teacher, Student
+from project.college.models import Grade
+from .models import Teacher, Student
 
 
 class TeacherListView(ListView):
@@ -17,18 +18,17 @@ class StudentListView(ListView):
     model = Student
 
 
-class StudentDetailView(DetailView):
+class StudentDetailView(View):
     model = Student
 
-    def get_object(self, queryset=None) -> Student:
-        return (
-            Student.objects.filter(id=self.kwargs["pk"])
-            .prefetch_related(
-                Prefetch("courses", Course.objects.filter(students__id=self.kwargs["pk"])),
-                Prefetch("grades", Grade.objects.filter(student_id=self.kwargs["pk"])),
-                Prefetch("grades__timetable", TimeTable.objects.filter(course__students__id=self.kwargs["pk"])),
-                Prefetch("grades__timetable__course", Course.objects.filter(students__id=self.kwargs["pk"])),
-                "grades__timetable__lesson",
-                "grades__timetable__lesson__chair",
-            ).first()
-        )
+    def get(self, request, pk: int):
+        context = {
+            "student": Student.objects.filter(id=pk).prefetch_related("courses").first(),
+            "grades": Grade.objects.filter(student_id=pk).select_related(
+                "timetable",
+                "timetable__course",
+                "timetable__lesson",
+                "timetable__lesson__chair",
+            ),
+        }
+        return render(request, "users/student_detail.html", context=context)

@@ -15,7 +15,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from utils.config import get_config
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 config = get_config(BASE_DIR / "etc/config/config.yml")
 
@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "users",
-    "college",
+    "project.users",
+    "project.college",
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ if config.debug_toolbar:
     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
     INTERNAL_IPS = ["127.0.0.1"]
 
-ROOT_URLCONF = 'application.urls'
+ROOT_URLCONF = 'project.application.urls'
 
 TEMPLATES = [
     {
@@ -80,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'application.wsgi.application'
+WSGI_APPLICATION = 'project.application.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases

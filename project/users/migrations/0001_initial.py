@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
-import users.models
+import project.users.models
 
 
 class Migration(migrations.Migration):
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Все пользователи',
             },
             managers=[
-                ('objects', users.models.UserManager()),
+                ('objects', project.users.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             },
             bases=('users.user',),
             managers=[
-                ('objects', users.models.UserManager()),
+                ('objects', project.users.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
             },
             bases=('users.user',),
             managers=[
-                ('objects', users.models.UserManager()),
+                ('objects', project.users.models.UserManager()),
             ],
         ),
     ]
