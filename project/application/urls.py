@@ -26,8 +26,8 @@ urlpatterns = [
     path("users/", include("project.users.urls", namespace="users")),
 ]
 
-if config.silk:
+if config.env.silk:
     urlpatterns += [path('silk/', include("silk.urls", namespace="silk"))]
 
-if config.debug_toolbar:
+if config.env.debug_toolbar:
     urlpatterns += [path('__debug__/', include("debug_toolbar.urls"))]

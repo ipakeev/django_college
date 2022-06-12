@@ -1,9 +1,17 @@
-secret_key: ANY_RANDOM_GENERATED_SECRET_KEY
-silk: false
-debug_toolbar: false
+env:
+  debug: false
+  secret_key: ANY_RANDOM_GENERATED_SECRET_KEY
+  silk: false
+  debug_toolbar: false
 college:
   phone: +7 (937) 123-45-45
   email: college@mail.ru
+email_sender:
+  host: smtp.mail.ru
+  port: 587
+  user: college
+  password: password
+  use_tls: true
 admin:
   name: Admin
   email: admin@mail.ru

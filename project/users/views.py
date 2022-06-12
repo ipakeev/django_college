@@ -68,7 +68,6 @@ class Contacts(View):
         send_email.delay(
             f"[College] Сообщение от {from_email}.",
             message,
-            config.college.email,
             [config.admin.email],
         )
 
@@ -76,6 +75,5 @@ class Contacts(View):
         send_email.delay(
             f"[College] Сообщение получено.",
             "Благодарим за сообщение. Мы ответим в ближайшее время.",
-            config.college.email,
             [from_email],
         )

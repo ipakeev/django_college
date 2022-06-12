@@ -23,10 +23,10 @@ config = get_config(BASE_DIR / "etc/config/config.yml")
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.secret_key
+SECRET_KEY = config.env.secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.env.debug
 
 ALLOWED_HOSTS = []
 
@@ -53,11 +53,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if config.silk:
+if config.env.silk:
     INSTALLED_APPS += ["silk"]
     MIDDLEWARE += ["silk.middleware.SilkyMiddleware"]
 
-if config.debug_toolbar:
+if config.env.debug_toolbar:
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
     INTERNAL_IPS = ["127.0.0.1"]
@@ -135,4 +135,10 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = config.college.email
+EMAIL_HOST = config.email_sender.host
+EMAIL_HOST_USER = config.email_sender.user
+EMAIL_HOST_PASSWORD = config.email_sender.password
+EMAIL_PORT = config.email_sender.port
+EMAIL_USE_TLS = config.email_sender.use_tls
