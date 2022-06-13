@@ -4,8 +4,10 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
 
+from utils.mixins import MarkAsDeletedMixin, MarkAsDeletedObjectManager
 
-class UserManager(BaseUserManager):
+
+class UserManager(MarkAsDeletedObjectManager, BaseUserManager):
     use_in_migrations = True
 
     def _create_user(self, email: str, password: str, **extra_fields: Any):
@@ -38,14 +40,14 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractUser, PermissionsMixin):
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
-    username = None
-
+class User(MarkAsDeletedMixin, AbstractUser, PermissionsMixin):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Все пользователи"
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    username = None
 
     objects = UserManager()
 

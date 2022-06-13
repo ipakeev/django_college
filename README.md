@@ -12,7 +12,7 @@
 
 ### **Запуск проекта:**
 - `pip install -r requirements.txt`
-- `etc/config/config.yml` - создать конфигурационный файл
+- `etc/local/config.yml` - создать конфигурационный файл
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
 - `python manage.py fill_db` - заполнить БД фейковыми данными

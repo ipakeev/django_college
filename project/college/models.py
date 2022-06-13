@@ -1,7 +1,9 @@
 from django.db import models
 
+from utils.mixins import MarkAsDeletedMixin
 
-class Chair(models.Model):
+
+class Chair(MarkAsDeletedMixin, models.Model):
     class Meta:
         verbose_name = "Кафедра"
         verbose_name_plural = "Кафедры"
@@ -15,7 +17,7 @@ class Chair(models.Model):
         return self.title
 
 
-class Lesson(models.Model):
+class Lesson(MarkAsDeletedMixin, models.Model):
     class Meta:
         verbose_name = "Занятие"
         verbose_name_plural = "Занятия"
@@ -40,7 +42,7 @@ class Lesson(models.Model):
         return f"{self.chair}: {self.theme}"
 
 
-class Auditorium(models.Model):
+class Auditorium(MarkAsDeletedMixin, models.Model):
     class Meta:
         verbose_name = "Аудитория"
         verbose_name_plural = "Аудитории"
@@ -54,7 +56,7 @@ class Auditorium(models.Model):
         return self.address
 
 
-class Course(models.Model):
+class Course(MarkAsDeletedMixin, models.Model):
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
@@ -72,7 +74,7 @@ class Course(models.Model):
         return self.title
 
 
-class TimeTable(models.Model):
+class TimeTable(MarkAsDeletedMixin, models.Model):
     class Meta:
         verbose_name = "Расписание"
         verbose_name_plural = "Расписание"
@@ -117,7 +119,7 @@ class TimeTable(models.Model):
         return f"{self.date.isoformat()} {self.time()}: {self.lesson}"
 
 
-class Grade(models.Model):
+class Grade(MarkAsDeletedMixin, models.Model):
     class Meta:
         verbose_name = "Оценка за урок"
         verbose_name_plural = "Оценки за уроки"

@@ -17,7 +17,7 @@ from utils.config import get_config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-config = get_config(BASE_DIR / "etc/config/config.yml")
+config = get_config(BASE_DIR / "etc/local/config.yml")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
