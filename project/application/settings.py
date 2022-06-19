@@ -95,6 +95,7 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 AUTH_USER_MODEL = "users.User"
 ADMINS = [(config.admin.name, config.admin.email)]
+LOGIN_URL = "/users/login/"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

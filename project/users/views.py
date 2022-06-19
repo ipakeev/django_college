@@ -1,11 +1,13 @@
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView, DetailView
 
 from project.college.models import Grade
-from .forms import EmailMessageForm
+from .forms import EmailMessageForm, LoginForm
 from .models import Teacher, Student
 from .tasks import send_email
 from ..application.settings import config
@@ -23,7 +25,7 @@ class StudentListView(ListView):
     model = Student
 
 
-class StudentDetailView(View):
+class StudentDetailView(LoginRequiredMixin, View):
 
     def get(self, request: WSGIRequest, pk: int):
         context = {
@@ -38,7 +40,7 @@ class StudentDetailView(View):
         return render(request, "users/student_detail.html", context=context)
 
 
-class Contacts(View):
+class ContactsView(View):
 
     def get(self, request: WSGIRequest):
         context = {
@@ -77,3 +79,44 @@ class Contacts(View):
             "Благодарим за сообщение. Мы ответим в ближайшее время.",
             [from_email],
         )
+
+
+class LoginView(View):
+
+    def get(self, request: WSGIRequest):
+        context = {
+            "form": LoginForm(),
+        }
+        return render(request, "users/login.html", context=context)
+
+    def post(self, request: WSGIRequest):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            email = data["email"]
+            user = authenticate(username=email, password=data["password"])
+            if user is None or user.is_deleted:
+                messages.add_message(request, messages.ERROR, f"Пользователь {email} не найден.")
+            elif not user.is_active:
+                messages.add_message(request, messages.ERROR, f"Пользователь {email} не активен.")
+            else:
+                login(request, user)
+                return render(request, "root.html")
+
+        context = {
+            "form": LoginForm(),
+        }
+        return render(request, "users/login.html", context=context)
+
+
+class LogoutView(LoginRequiredMixin, View):
+
+    def get(self, request: WSGIRequest):
+        logout(request)
+        return render(request, "root.html")
+
+
+class AccountView(LoginRequiredMixin, View):
+
+    def get(self, request: WSGIRequest):
+        return render(request, "users/account.html")

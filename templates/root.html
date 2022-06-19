@@ -23,6 +23,7 @@
 
 <body>
 
+
 {% block menu %}
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid collapse navbar-collapse" id="navbarSupportedContent">
@@ -64,8 +65,37 @@
         </li>
       </ul>
 
+      {% if user.is_authenticated %}
+        <div class="btn-group">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            {{ user.email }}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="{% url 'users:account' %}">Личный кабинет</a></li>
+            <li><a class="dropdown-item" href="{% url 'users:logout' %}">Выйти</a></li>
+          </ul>
+        </div>
+      {% else %}
+        <a class="nav-link" href="{% url 'users:login' %}">Войти</a>
+      {% endif %}
+
     </div>
   </nav>
+{% endblock %}
+
+{% block messages %}
+  {% if messages %}
+    <br>
+    <div class="container">
+      <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 {% endblock %}
 
 <br>
@@ -88,7 +118,6 @@
     <h3>Запуск проекта:</h3>
     <ul>
       <li><code>pip install -r requirements.txt</code></li>
-      <li><code>cd project</code></li>
       <li><code>python manage.py migrate</code></li>
       <li><code>python manage.py createsuperuser</code></li>
       <li><code>python manage.py fill_db</code> - заполнить БД фейковыми данными</li>
