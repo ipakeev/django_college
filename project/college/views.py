@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -9,6 +10,7 @@ from django.views.generic import (
     DeleteView,
 )
 
+from project.application.permissions import ViewTimetablePermission, EditLessonsPermission
 from .models import Chair, Course, TimeTable, Lesson
 
 
@@ -28,7 +30,8 @@ class CourseDetailView(DetailView):
     model = Course
 
 
-class TimeTableView(View):
+class TimeTableView(PermissionRequiredMixin, View):
+    permission_required = ViewTimetablePermission.title
 
     def get(self, request, pk: int, *args, **kwargs):
         context = {
@@ -40,9 +43,11 @@ class TimeTableView(View):
         return render(request, "college/timetable.html", context=context)
 
 
-class LessonCRUDMixin:
+class LessonCRUDMixin(PermissionRequiredMixin):
     kwargs: dict
     object: Lesson
+
+    permission_required = EditLessonsPermission.title
 
     def get_object(self, queryset=None) -> Lesson:
         return Lesson.objects.filter(

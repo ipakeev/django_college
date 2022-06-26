@@ -1,14 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView, DetailView
+from social_django.utils import load_strategy
 
+from project.application.permissions import SendEmailPermission, ViewStudentDetailsPermission
 from project.college.models import Grade
 from .forms import EmailMessageForm, LoginForm
-from .models import Teacher, Student
+from .models import Teacher, Student, User
 from .tasks import send_email
 from ..application.settings import config
 
@@ -25,7 +27,8 @@ class StudentListView(ListView):
     model = Student
 
 
-class StudentDetailView(LoginRequiredMixin, View):
+class StudentDetailView(PermissionRequiredMixin, View):
+    permission_required = ViewStudentDetailsPermission.title
 
     def get(self, request: WSGIRequest, pk: int):
         context = {
@@ -40,7 +43,8 @@ class StudentDetailView(LoginRequiredMixin, View):
         return render(request, "users/student_detail.html", context=context)
 
 
-class ContactsView(View):
+class ContactsView(PermissionRequiredMixin, View):
+    permission_required = SendEmailPermission.title
 
     def get(self, request: WSGIRequest):
         context = {
@@ -119,4 +123,15 @@ class LogoutView(LoginRequiredMixin, View):
 class AccountView(LoginRequiredMixin, View):
 
     def get(self, request: WSGIRequest):
-        return render(request, "users/account.html")
+        user: User = request.user
+        context = {
+            "group": user.get_group_name(),
+        }
+        if user.is_social_auth:
+            context["token"] = user.social_auth.get(provider='google-oauth2').access_token
+        return render(request, "users/account.html", context=context)
+
+    def post(self, request: WSGIRequest):
+        social = request.user.social_auth.get(provider='google-oauth2')
+        social.refresh_token(load_strategy())
+        return self.get(request)

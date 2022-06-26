@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+from project.application.errors import BadRequestError, ForbiddenError, NotFoundError, InternalError
 from project.application.settings import config
 
 urlpatterns = [
@@ -32,3 +33,8 @@ if config.env.silk:
 
 if config.env.debug_toolbar:
     urlpatterns += [path('__debug__/', include("debug_toolbar.urls"))]
+
+handler400 = BadRequestError.as_view()
+handler403 = ForbiddenError.as_view()
+handler404 = NotFoundError.as_view()
+handler500 = InternalError.as_view()

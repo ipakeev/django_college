@@ -1,3 +1,0 @@
-GROUP_OAUTH2 = "OAuth2"
-GROUP_TEACHER = "Teacher"
-GROUP_STUDENT = "Student"
