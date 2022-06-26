@@ -15,6 +15,7 @@
 - `etc/local/config.yml` - создать конфигурационный файл
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
+- `python manage.py create_groups` - создать группы с пермишенами
 - `python manage.py fill_db` - заполнить БД фейковыми данными
 - `python manage.py runserver`
 - Celery:

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "social_django",
     "project.users",
     "project.college",
 ]
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "project.application.middlewares.UserGroupMessageMiddleware",
 ]
 
 if config.env.silk:
@@ -75,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -94,8 +98,19 @@ DATABASES = {
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 AUTH_USER_MODEL = "users.User"
-ADMINS = [(config.admin.name, config.admin.email)]
 LOGIN_URL = "/users/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config.oauth2.google.client_id
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config.oauth2.google.secret_key
+
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -136,6 +151,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ADMINS = [(config.admin.name, config.admin.email)]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = config.college.email
 EMAIL_HOST = config.email_sender.host

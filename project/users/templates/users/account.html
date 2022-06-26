@@ -4,7 +4,16 @@
   <div class="container">
     <ul>
       <li>Email: {{ user.email }}</li>
-      <li>Password: {{ user.password }}</li>
-    </ul>
+      <li>Группа: {{ group }}</li>
+
+      {% if token %}
+        <li>Токен: {{ token }}</li>
+        </ul>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit">Обновить токен</button>
+        </form>
+      {% endif %}
+
   </div>
 {% endblock %}

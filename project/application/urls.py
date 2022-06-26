@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+from project.application.errors import BadRequestError, ForbiddenError, NotFoundError, InternalError
 from project.application.settings import config
 
 urlpatterns = [
@@ -24,6 +25,7 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="root.html")),
     path("college/", include("project.college.urls", namespace="college")),
     path("users/", include("project.users.urls", namespace="users")),
+    path('', include('social_django.urls', namespace='social')),
 ]
 
 if config.env.silk:
@@ -31,3 +33,8 @@ if config.env.silk:
 
 if config.env.debug_toolbar:
     urlpatterns += [path('__debug__/', include("debug_toolbar.urls"))]
+
+handler400 = BadRequestError.as_view()
+handler403 = ForbiddenError.as_view()
+handler404 = NotFoundError.as_view()
+handler500 = InternalError.as_view()

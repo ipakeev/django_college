@@ -11,51 +11,55 @@ from project.college.models import (
     TimeTable,
     Grade,
 )
-from project.users.models import Teacher, Student
+from project.users.models import Teacher, Student, Degree
 
 
 class Command(BaseCommand):
-    help = "gdsg"
 
     def handle(self, *args, **options):
         with transaction.atomic():
-            salmin = Teacher.objects.create(
+            salmin = Teacher.objects.create_user(
                 email="salmin_em@mail.ru",
                 password="password",
                 first_name="Евгений",
                 last_name="Салмин",
                 patronymic="Михайлович",
-                degree=Teacher.Degree.doctor,
+                degree=Degree.doctor,
+                is_student=False,
             )
-            malyshkin = Teacher.objects.create(
+            malyshkin = Teacher.objects.create_user(
                 email="malyshkin_oa@mail.ru",
                 password="password",
                 first_name="Олег",
                 last_name="Малышкин",
                 patronymic="Арсентьевич",
-                degree=Teacher.Degree.candidate,
+                degree=Degree.candidate,
+                is_student=False,
             )
 
-            petrov = Student.objects.create(
+            petrov = Student.objects.create_user(
                 email="petrov@mail.ru",
                 password="password",
                 first_name="Петр",
                 last_name="Петров",
                 patronymic="Петрович",
+                is_student=True,
             )
-            ivanov = Student.objects.create(
+            ivanov = Student.objects.create_user(
                 email="ivanov@mail.ru",
                 password="password",
                 first_name="Иван",
                 last_name="Иванов",
                 patronymic="Иванович",
+                is_student=True,
             )
-            sidorov = Student.objects.create(
+            sidorov = Student.objects.create_user(
                 email="sidorov@mail.ru",
                 password="password",
                 first_name="Сидор",
                 last_name="Сидоров",
                 patronymic="Сидорович",
+                is_student=True,
             )
 
             course_engineering, course_science, course_economic = Course.objects.bulk_create([
