@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from django.db import models
 
 from utils.mixins import MarkAsDeletedMixin, MarkAsDeletedObjectManager
+from .groups import GROUP_OAUTH2, GROUP_TEACHER, GROUP_STUDENT
 
 
 class UserManager(MarkAsDeletedObjectManager, BaseUserManager):
@@ -93,6 +94,16 @@ class User(MarkAsDeletedMixin, AbstractUser, PermissionsMixin):
         if self.patronymic:
             full_name += f" {self.patronymic}"
         return full_name
+
+    def get_group_name(self) -> str:
+        if isinstance(self, Teacher):
+            return GROUP_TEACHER
+        elif isinstance(self, Student):
+            return GROUP_STUDENT
+        elif self.is_social_auth:
+            return GROUP_OAUTH2
+        else:
+            raise ValueError("unknown group")
 
     def __str__(self) -> str:
         return self.get_full_name()
