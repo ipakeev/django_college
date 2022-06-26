@@ -40,12 +40,24 @@ class CeleryConfig:
 
 
 @dataclass
+class OAuth2GoogleConfig:
+    client_id: str
+    secret_key: str
+
+
+@dataclass
+class OAuth2Config:
+    google: OAuth2GoogleConfig
+
+
+@dataclass
 class Config:
     env: EnvConfig
     college: CollegeConfig
     email_sender: EmailSenderConfig
     admin: AdminConfig
     celery: CeleryConfig
+    oauth2: OAuth2Config
 
 
 def get_config(file: pathlib.Path) -> Config:
@@ -57,4 +69,5 @@ def get_config(file: pathlib.Path) -> Config:
         admin=AdminConfig(**raw_yaml["admin"]),
         email_sender=EmailSenderConfig(**raw_yaml["email_sender"]),
         celery=CeleryConfig(**raw_yaml["celery"]),
+        oauth2=OAuth2Config(**raw_yaml["oauth2"]),
     )

@@ -24,6 +24,7 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="root.html")),
     path("college/", include("project.college.urls", namespace="college")),
     path("users/", include("project.users.urls", namespace="users")),
+    path('', include('social_django.urls', namespace='social')),
 ]
 
 if config.env.silk:

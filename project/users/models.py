@@ -17,9 +17,12 @@ class UserManager(MarkAsDeletedObjectManager, BaseUserManager):
         user.save()
         return user
 
-    def create_user(self, email: str, password: str, **extra_fields: Any):
+    def create_user(self, email: str, password: str | None = None, **extra_fields: Any):
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
+        if password is None:
+            password = ""
+            extra_fields["is_social_auth"] = True
 
         if extra_fields.get("is_superuser") is True:
             raise ValueError("User must have is_superuser=False.")
@@ -76,6 +79,10 @@ class User(MarkAsDeletedMixin, AbstractUser, PermissionsMixin):
     is_active = models.BooleanField(
         default=True,
         verbose_name="Активный",
+    )
+    is_social_auth = models.BooleanField(
+        default=False,
+        verbose_name="Через социальную сеть",
     )
 
     def get_username(self) -> str:
