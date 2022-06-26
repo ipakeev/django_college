@@ -45,9 +45,12 @@ class OAuth2GoogleConfig:
     secret_key: str
 
 
-@dataclass
+@dataclass(init=False)
 class OAuth2Config:
     google: OAuth2GoogleConfig
+
+    def __init__(self, google: dict):
+        self.google = OAuth2GoogleConfig(**google)
 
 
 @dataclass
