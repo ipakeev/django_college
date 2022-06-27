@@ -7,7 +7,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from social_django.utils import load_strategy
 
-from project.application.permissions import SendEmailPermission, ViewStudentDetailsPermission
+from project.application.permissions import SendEmailPermission, ViewStudentDetailsPermission, GROUP_OAUTH2
 from project.college.models import Grade
 from .forms import EmailMessageForm, LoginForm
 from .models import Teacher, Student, User
@@ -125,9 +125,9 @@ class AccountView(LoginRequiredMixin, View):
     def get(self, request: WSGIRequest):
         user: User = request.user
         context = {
-            "group": user.get_group_name(),
+            "group": user.group_name,
         }
-        if user.is_social_auth:
+        if user.group_name == GROUP_OAUTH2:
             context["token"] = user.social_auth.get(provider='google-oauth2').access_token
         return render(request, "users/account.html", context=context)
 

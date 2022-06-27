@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group, Permission
 from django.core.management import BaseCommand
 from django.db import transaction
 
-from project.users.models import Teacher, Student, User
+from project.users.models import Teacher, Student, OAuth2User
 from project.application.permissions import (
     GROUP_TEACHER,
     GROUP_STUDENT,
@@ -29,4 +29,4 @@ class Command(BaseCommand):
             group.user_set.add(*Student.objects.all())
 
             group = Group.objects.get(name=GROUP_OAUTH2)
-            group.user_set.add(*User.objects.filter(is_social_auth=True).all())
+            group.user_set.add(*OAuth2User.objects.all())
