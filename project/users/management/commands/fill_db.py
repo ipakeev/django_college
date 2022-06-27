@@ -11,7 +11,7 @@ from project.college.models import (
     TimeTable,
     Grade,
 )
-from project.users.models import Teacher, Student, Degree
+from project.users.models import Teacher, Student, Degree, GroupName
 
 
 class Command(BaseCommand):
@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 last_name="Салмин",
                 patronymic="Михайлович",
                 degree=Degree.doctor,
-                is_student=False,
+                group_name=GroupName.teacher.value,
             )
             malyshkin = Teacher.objects.create_user(
                 email="malyshkin_oa@mail.ru",
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 last_name="Малышкин",
                 patronymic="Арсентьевич",
                 degree=Degree.candidate,
-                is_student=False,
+                group_name=GroupName.teacher.value,
             )
 
             petrov = Student.objects.create_user(
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 first_name="Петр",
                 last_name="Петров",
                 patronymic="Петрович",
-                is_student=True,
+                group_name=GroupName.student.value,
             )
             ivanov = Student.objects.create_user(
                 email="ivanov@mail.ru",
@@ -51,7 +51,7 @@ class Command(BaseCommand):
                 first_name="Иван",
                 last_name="Иванов",
                 patronymic="Иванович",
-                is_student=True,
+                group_name=GroupName.student.value,
             )
             sidorov = Student.objects.create_user(
                 email="sidorov@mail.ru",
@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 first_name="Сидор",
                 last_name="Сидоров",
                 patronymic="Сидорович",
-                is_student=True,
+                group_name=GroupName.student.value,
             )
 
             course_engineering, course_science, course_economic = Course.objects.bulk_create([

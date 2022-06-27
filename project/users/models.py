@@ -13,8 +13,7 @@ class UserManager(MarkAsDeletedObjectManager, BaseUserManager):
     use_in_migrations = True
 
     def _add_to_group(self, user: "User") -> None:
-        group_name = user.get_group_name()
-        group = Group.objects.get(name=group_name)
+        group = Group.objects.get(name=user.group_name)
         group.user_set.add(user)
 
     def _create_user(self, email: str, password: str, **extra_fields: Any):
@@ -29,7 +28,7 @@ class UserManager(MarkAsDeletedObjectManager, BaseUserManager):
         extra_fields.setdefault("is_superuser", False)
         if password is None:
             password = ""
-            extra_fields["is_social_auth"] = True
+            extra_fields["group_name"] = GroupName.oauth2.value
 
         if extra_fields.get("is_superuser") is True:
             raise ValueError("User must have is_superuser=False.")
@@ -50,6 +49,12 @@ class UserManager(MarkAsDeletedObjectManager, BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self._create_user(email, password, **extra_fields)
+
+
+class GroupName(models.TextChoices):
+    teacher = (GROUP_TEACHER, "Учитель")
+    student = (GROUP_STUDENT, "Студент")
+    oauth2 = (GROUP_OAUTH2, "Через соц.сеть")
 
 
 class Degree(models.TextChoices):
@@ -101,13 +106,10 @@ class User(MarkAsDeletedMixin, AbstractUser, PermissionsMixin):
         choices=Degree.choices,
         verbose_name="Категория",
     )
-    is_student = models.BooleanField(
-        default=False,
-        verbose_name="Является студентом",
-    )
-    is_social_auth = models.BooleanField(
-        default=False,
-        verbose_name="Через социальную сеть",
+    group_name = models.CharField(
+        max_length=16,
+        choices=GroupName.choices,
+        verbose_name="Название группы пользователей",
     )
     joined_at = models.DateTimeField(
         auto_now_add=True,
@@ -127,14 +129,6 @@ class User(MarkAsDeletedMixin, AbstractUser, PermissionsMixin):
             full_name += f" {self.patronymic}"
         return full_name
 
-    def get_group_name(self) -> str:
-        if self.is_student:
-            return GROUP_STUDENT
-        elif self.is_social_auth:
-            return GROUP_OAUTH2
-        else:
-            return GROUP_TEACHER
-
     def has_perm(self, perm: str, obj=None):
         return super().has_perm(f"{self._meta.app_label}.{perm}")
 
@@ -142,14 +136,9 @@ class User(MarkAsDeletedMixin, AbstractUser, PermissionsMixin):
         return self.get_full_name()
 
 
-class TeacherModelManager(UserManager):
+class UserGroupModelManager(UserManager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_social_auth=False, is_student=False)
-
-
-class StudentModelManager(UserManager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_student=True)
+        return super().get_queryset().filter(group_name=self.model.GROUP)
 
 
 class Teacher(User):
@@ -158,7 +147,8 @@ class Teacher(User):
         verbose_name_plural = "Преподаватели"
         proxy = True
 
-    objects = TeacherModelManager()
+    GROUP = GROUP_TEACHER
+    objects = UserGroupModelManager()
 
     def __str__(self) -> str:
         return f"{self.get_degree_display()} {self.get_full_name()}"
@@ -170,4 +160,15 @@ class Student(User):
         verbose_name_plural = "Студенты"
         proxy = True
 
-    objects = StudentModelManager()
+    GROUP = GROUP_STUDENT
+    objects = UserGroupModelManager()
+
+
+class OAuth2User(User):
+    class Meta:
+        verbose_name = "OAuth2"
+        verbose_name_plural = "OAuth2"
+        proxy = True
+
+    GROUP = GROUP_OAUTH2
+    objects = UserGroupModelManager()

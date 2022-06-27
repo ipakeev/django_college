@@ -28,7 +28,7 @@ class UserGroupMessageMiddleware:
         elif user.is_anonymous:
             message = "Не забудьте авторизоваться."
         else:
-            message = self.message[user.get_group_name()]
+            message = self.message[user.group_name]
 
         if message:
             messages.add_message(request, messages.INFO, message, extra_tags=self.tag)
