@@ -3,6 +3,7 @@
 ### **Общие сведения:**
 - Python 3.10
 - Django 4.0
+- Django REST framework 3.13
 - SQLite3
 - Celery 5.2
 - Redis 4.3

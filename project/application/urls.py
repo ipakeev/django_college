@@ -16,9 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from project.application.errors import BadRequestError, ForbiddenError, NotFoundError, InternalError
 from project.application.settings import config
+from project.college.routers import college_api_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,6 +32,11 @@ urlpatterns = [
     path("college/", include("project.college.urls", namespace="college")),
     path("users/", include("project.users.urls", namespace="users")),
     path('', include('social_django.urls', namespace='social')),
+    path('api/', include("rest_framework.urls")),
+    path("api/", include(college_api_router.urls)),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
 
 if config.env.silk:
