@@ -5,15 +5,40 @@
     <ul>
       <li>Email: {{ user.email }}</li>
       <li>Группа: {{ group }}</li>
+      <br>
 
-      {% if token %}
-        <li>Токен: {{ token }}</li>
-        </ul>
+      {% if oauth2_token %}
+        <li>OAuth2-токен: {{ oauth2_token }}</li>
         <form method="post">
           {% csrf_token %}
-          <button type="submit">Обновить токен</button>
+          <button type="submit" name="oauth2_refresh_token">Обновить OAuth2-токен</button>
         </form>
+      {% else %}
+        {% if jwt_token %}
+          <li>JWT-токен: {{ jwt_token }}</li>
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="jwt_refresh_token">Обновить JWT-токен</button>
+          </form>
+        {% else %}
+          <form method="post">
+            {% csrf_token %}
+            <table>
+              <tbody>
+              <tr>
+                <th><label for="id_password">Ваш пароль:</label></th>
+                <td>
+                  <input type="password" name="password" required="" id="id_password">
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <button type="submit" name="jwt_obtain_token">Выпустить JWT-токен</button>
+          </form>
+        {% endif %}
       {% endif %}
+
+    </ul>
 
   </div>
 {% endblock %}

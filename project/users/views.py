@@ -1,8 +1,11 @@
+import json
+
+import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
-from django.shortcuts import render
+from django.shortcuts import render, Http404
 from django.views import View
 from django.views.generic import ListView, DetailView
 from social_django.utils import load_strategy
@@ -122,16 +125,57 @@ class LogoutView(LoginRequiredMixin, View):
 
 class AccountView(LoginRequiredMixin, View):
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: WSGIRequest, jwt_tokens=None):
         user: User = request.user
         context = {
-            "group": user.group_name,
+            "group": user.group_name or "Администратор",
         }
         if user.group_name == GROUP_OAUTH2:
-            context["token"] = user.social_auth.get(provider='google-oauth2').access_token
-        return render(request, "users/account.html", context=context)
+            context["oauth2_token"] = user.social_auth.get(provider='google-oauth2').access_token
+        else:
+            context["jwt_token"] = request.COOKIES.get("access_token")
+
+        response = render(request, "users/account.html", context=context)
+
+        if jwt_tokens:
+            for key, value in jwt_tokens.items():
+                response.set_cookie(key, value)
+
+        return response
 
     def post(self, request: WSGIRequest):
-        social = request.user.social_auth.get(provider='google-oauth2')
-        social.refresh_token(load_strategy())
-        return self.get(request)
+        user: User = request.user
+        jwt_tokens = None
+        if "oauth2_refresh_token" in request.POST:
+            social = request.user.social_auth.get(provider='google-oauth2')
+            social.refresh_token(load_strategy())
+        elif "jwt_obtain_token" in request.POST:
+            headers = {"Content-Type": "application/json"}
+            data = {"email": user.email, "password": request.POST.get("password")}
+            response = requests.post(
+                "http://localhost:8000/api/token/",
+                headers=headers,
+                data=json.dumps(data),
+            )
+            response.raise_for_status()
+            tokens = response.json()
+            jwt_tokens = {
+                "access_token": tokens["access"],
+                "refresh_token": tokens["refresh"],
+            }
+        elif "jwt_refresh_token" in request.POST:
+            headers = {"Content-Type": "application/json"}
+            data = {"refresh": request.COOKIES.get("refresh_token")}
+            response = requests.post(
+                "http://localhost:8000/api/token/refresh/",
+                headers=headers,
+                data=json.dumps(data),
+            )
+            response.raise_for_status()
+            tokens = response.json()
+            jwt_tokens = {
+                "access_token": tokens["access"],
+            }
+        else:
+            raise Http404
+        return self.get(request, jwt_tokens=jwt_tokens)
