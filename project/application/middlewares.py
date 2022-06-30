@@ -1,13 +1,12 @@
-from collections.abc import Callable
-
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
+from django.utils.deprecation import MiddlewareMixin
 
 from project.application.permissions import GROUP_OAUTH2, GROUP_TEACHER, GROUP_STUDENT
 from project.users.models import User
 
 
-class UserGroupMessageMiddleware:
+class UserGroupMessageMiddleware(MiddlewareMixin):
     tag = "group_message"
     message = {
         GROUP_TEACHER: "Учитель, благодарим за Вашу работу!",
@@ -15,11 +14,7 @@ class UserGroupMessageMiddleware:
         GROUP_OAUTH2: "Добро пожаловать в наш вуз.",
     }
 
-    def __init__(self, get_response: Callable):
-        self.get_response = get_response
-
-    def __call__(self, request: WSGIRequest) -> None:
-        response = self.get_response(request)
+    def process_response(self, request: WSGIRequest, response) -> None:
         self.clear_previous_messages(request)
 
         user: User = request.user
