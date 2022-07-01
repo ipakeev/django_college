@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "project.application.middlewares.JWTTokenMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -111,6 +112,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config.oauth2.google.secret_key
 
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.google.GoogleOAuth2',
+    "utils.backends.JWTTokenAuthBackend",
     'django.contrib.auth.backends.ModelBackend',
 ]
 

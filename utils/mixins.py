@@ -10,11 +10,14 @@ class MarkAsDeletedObjectManager(models.Manager):
         return super().get_queryset()
 
 
-class MarkAsDeletedMixin:
+class MarkAsDeletedMixin(models.Model):
+    class Meta:
+        abstract = True
+
     objects = MarkAsDeletedObjectManager()
 
     is_deleted = models.BooleanField(default=False, verbose_name="Удалено")
 
-    def delete(self, *args, **kwargs) -> None:
+    def delete(self, using=None, keep_parents=False) -> None:
         self.is_deleted = True
         self.save()

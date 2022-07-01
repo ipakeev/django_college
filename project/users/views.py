@@ -1,6 +1,3 @@
-import json
-
-import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -11,11 +8,12 @@ from django.views.generic import ListView, DetailView
 from social_django.utils import load_strategy
 
 from project.application.permissions import SendEmailPermission, ViewStudentDetailsPermission, GROUP_OAUTH2
+from project.application.settings import config
 from project.college.models import Grade
+from utils.jwt import obtain_tokens_for_user, refresh_tokens, get_tokens
 from .forms import EmailMessageForm, LoginForm
 from .models import Teacher, Student, User
 from .tasks import send_email
-from ..application.settings import config
 
 
 class TeacherListView(ListView):
@@ -88,6 +86,21 @@ class ContactsView(PermissionRequiredMixin, View):
         )
 
 
+class LoginJWTView(View):
+
+    def get(self, request: WSGIRequest):
+        user = authenticate(wsgi_request=request)
+        if user is None or user.is_deleted:
+            messages.add_message(request, messages.ERROR, f"Пользователь не найден.")
+        elif not user.is_active:
+            messages.add_message(request, messages.ERROR, f"Пользователь не активен.")
+        else:
+            login(request, user)
+            return render(request, "root.html")
+
+        return LoginView().get(request)
+
+
 class LoginView(View):
 
     def get(self, request: WSGIRequest):
@@ -125,7 +138,7 @@ class LogoutView(LoginRequiredMixin, View):
 
 class AccountView(LoginRequiredMixin, View):
 
-    def get(self, request: WSGIRequest, jwt_tokens=None):
+    def get(self, request: WSGIRequest, tokens=None):
         user: User = request.user
         context = {
             "group": user.group_name or "Администратор",
@@ -133,49 +146,25 @@ class AccountView(LoginRequiredMixin, View):
         if user.group_name == GROUP_OAUTH2:
             context["oauth2_token"] = user.social_auth.get(provider='google-oauth2').access_token
         else:
-            context["jwt_token"] = request.COOKIES.get("access_token")
+            context.update(get_tokens(request))
 
-        response = render(request, "users/account.html", context=context)
+        if tokens:
+            request.COOKIES.update(tokens)
 
-        if jwt_tokens:
-            for key, value in jwt_tokens.items():
-                response.set_cookie(key, value)
-
-        return response
+        return render(request, "users/account.html", context=context)
 
     def post(self, request: WSGIRequest):
         user: User = request.user
-        jwt_tokens = None
         if "oauth2_refresh_token" in request.POST:
             social = request.user.social_auth.get(provider='google-oauth2')
             social.refresh_token(load_strategy())
+            tokens = None
         elif "jwt_obtain_token" in request.POST:
-            headers = {"Content-Type": "application/json"}
-            data = {"email": user.email, "password": request.POST.get("password")}
-            response = requests.post(
-                "http://localhost:8000/api/token/",
-                headers=headers,
-                data=json.dumps(data),
-            )
-            response.raise_for_status()
-            tokens = response.json()
-            jwt_tokens = {
-                "access_token": tokens["access"],
-                "refresh_token": tokens["refresh"],
-            }
+            tokens = obtain_tokens_for_user(user)
         elif "jwt_refresh_token" in request.POST:
-            headers = {"Content-Type": "application/json"}
-            data = {"refresh": request.COOKIES.get("refresh_token")}
-            response = requests.post(
-                "http://localhost:8000/api/token/refresh/",
-                headers=headers,
-                data=json.dumps(data),
-            )
-            response.raise_for_status()
-            tokens = response.json()
-            jwt_tokens = {
-                "access_token": tokens["access"],
-            }
+            tokens = refresh_tokens(request)
+        elif "jwt_delete_token" in request.POST:
+            tokens = {"delete_tokens": "true"}
         else:
             raise Http404
-        return self.get(request, jwt_tokens=jwt_tokens)
+        return self.get(request, tokens=tokens)
