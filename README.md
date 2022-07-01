@@ -22,6 +22,11 @@
 - Преподаватель
 - Студент
 
+### **DRF:** 
+- /api/lesson/
+- /api/grade/
+- /api/token/
+
 ### **Запуск проекта:**
 - `pip install -r requirements.txt`
 - `etc/local/config.yml` - создать конфигурационный файл

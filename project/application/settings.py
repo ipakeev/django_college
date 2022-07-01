@@ -28,7 +28,7 @@ SECRET_KEY = config.env.secret_key
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.env.debug
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
