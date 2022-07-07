@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "social_django",
+    "graphene_django",
     "project.users",
     "project.college",
 ]
@@ -146,6 +147,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     )
+}
+
+GRAPHENE = {
+    "SCHEMA": "project.application.gql.schema"
 }
 
 # Internationalization

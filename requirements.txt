@@ -7,6 +7,8 @@ django-silk==4.3.0
 django-debug-toolbar==3.4.0
 django-filter==22.1
 gevent==21.12.0
+graphene==2.1.9
+graphene-django==2.15.0
 markdown==3.3.7
 pyjwt==2.4.0
 PyYAML==6.0
